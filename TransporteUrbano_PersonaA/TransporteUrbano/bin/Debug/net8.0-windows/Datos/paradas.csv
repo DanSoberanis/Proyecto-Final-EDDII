@@ -1,0 +1,25 @@
+codigo,nombre,latitud,longitud
+X01,Parque Centro América,14.8347,-91.5181
+X02,Parque Benito Juárez,14.8352,-91.5245
+X03,Mercado La Democracia,14.8405,-91.5165
+X04,Terminal Minerva,14.8442,-91.5285
+X05,Templo de Minerva,14.8485,-91.5325
+X06,Estadio Mario Camposeco,14.8415,-91.5235
+X07,Hospital Regional de Occidente,14.8385,-91.5335
+X08,CUNOC Universidad de San Carlos,14.8535,-91.529
+X09,Terminal Galgos,14.8305,-91.514
+X10,Cementerio General,14.83,-91.5245
+X11,Pradera Xela,14.856,-91.513
+X12,Universidad Rafael Landívar Xela,14.8275,-91.5105
+X13,Monumento a Tecún Umán,14.8617,-91.5181
+X14,Mercado Minerva,14.8458,-91.53
+M01,Olintepeque,14.865,-91.53
+M02,Salcajá,14.87,-91.455
+M03,Cantel,14.81,-91.46
+M04,Almolonga,14.795,-91.495
+M05,Zunil,14.774,-91.485
+M06,San Juan Ostuncalco,14.85,-91.6
+M07,San Mateo,14.811,-91.558
+M08,La Esperanza,14.83,-91.55
+M09,Cajolá,14.9167,-91.6167
+M10,Huitán,14.9,-91.5833

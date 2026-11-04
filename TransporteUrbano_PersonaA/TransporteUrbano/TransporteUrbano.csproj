@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <RootNamespace>TransporteUrbano</RootNamespace>
+    <AssemblyName>TransporteUrbano</AssemblyName>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <!-- Mapa real de OpenStreetMap (si ya lo instalaste con dotnet add package, no repitas esta línea) -->
+  <ItemGroup>
+    <PackageReference Include="GMap.NET.WinForms" Version="2.1.7" />
+  </ItemGroup>
+
+  <!-- Copia los CSV de ejemplo junto al .exe para que el programa los encuentre en Datos\ -->
+  <ItemGroup>
+    <None Update="Datos\*.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

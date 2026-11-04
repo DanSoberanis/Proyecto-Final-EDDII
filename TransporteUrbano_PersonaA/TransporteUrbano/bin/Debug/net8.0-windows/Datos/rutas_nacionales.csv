@@ -1,0 +1,10 @@
+Origen,Destino,Tiempo,Costo,Unidireccional
+GUA,ANT,60,20,false
+GUA,XEL,210,80,false
+GUA,ESC,90,40,false
+GUA,COB,240,100,false
+GUA,PBA,300,125,false
+XEL,HUE,120,50,false
+XEL,QUI,150,60,false
+COB,PET,240,150,false
+ESC,PBA,360,200,false

@@ -1,0 +1,8 @@
+paradas.csv / rutas.csv: red de Quetzaltenango (Xela) y municipios cercanos.
+Las coordenadas son ESTIMADAS (pueden variar cientos de metros). Solo el centro de la ciudad
+(Parque Centro América, 14.8347, -91.5181) se verificó en internet. Si algo queda mal ubicado,
+corrige la latitud y longitud en paradas.csv (clic derecho sobre el lugar en Google Maps).
+Tiempos: distancia en línea recta x 1.35 / velocidad (17, 25 o 32 km/h). Costo base urbano: Q3.50.
+Hay 3 zonas desconectadas a propósito (para probar Union-Find): la red principal,
+San Juan Ostuncalco - San Mateo - La Esperanza, y Cajolá - Huitán.
+Los archivos *_ciudad_de_guatemala.csv son el ejemplo anterior.
