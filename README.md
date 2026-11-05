@@ -1,46 +1,61 @@
-# Red de transporte urbano: parte de la Persona A
+# Sistema de Transporte Urbano y Red Vial Nacional
+**Curso:** Estructura de Datos II  
+**Catedrático:** Ing. Manuel Gustavo Rojas  
+**Lenguaje:** C# (.NET 8.0 / Windows Forms)  
+**Modalidad:** Proyecto de Laboratorio No. 2 (Grupal)
 
-Proyecto de laboratorio 2, Estructura de Datos II (C#, Windows Forms, .NET 8).
+---
 
-## Cómo abrirlo
-1. Instala el SDK de .NET 8 (o Visual Studio 2022 con la carga "Desarrollo de escritorio con .NET").
-2. Abre `TransporteUrbano.csproj` y ejecuta (F5), o desde la carpeta: `dotnet run`.
-3. Al abrir carga `Datos/paradas.csv` y `Datos/rutas.csv`. Con el grafo pendiente verás "Grafo pendiente (Persona B)" y todo lo demás funciona.
+## 1. Descripción del Proyecto y Escenario
 
-## Quién hizo qué
-| Archivo | Responsable |
-|---|---|
-| Estructuras/ListaEnlazada.cs, TablaHash.cs, Trie.cs, UnionFind.cs | Persona A |
-| Servicios/CargadorArchivos.cs, Servicios/SistemaTransporte.cs (integración) | Persona A (la Persona B revisa y amplía la parte del grafo) |
-| UI/*, Estructuras/MapaBase.cs | Persona A |
-| Estructuras/Grafo, Dijkstra, MinHeap (por crear) | Persona B |
+El sistema modela una red de transporte interurbana y nacional (enfocada en Quetzaltenango y conexiones estratégicas de Guatemala). Permite la gestión de paradas (estaciones), el registro de rutas viales ponderadas por tiempo y costo, la consulta en tiempo real mediante autocompletado, la verificación inmediata de conectividad entre sectores aislados y el cálculo de trayectorias óptimas.
 
-## Para la Persona B (cómo conectar el Grafo)
-1. Crea tu clase `Grafo` en `Estructuras/` (namespace `TransporteUrbano.Estructuras`) que implemente `IGrafoTransporte`
-   (lista de adyacencia, BFS con `Queue<T>`, DFS, Dijkstra con `MinHeap` propio, `Disponible => true`).
-2. En `Estructuras/FabricaGrafo.cs` cambia `return new GrafoNoDisponible();` por `return new Grafo();`.
-3. No necesitas tocar la interfaz gráfica: el botón Calcular, los recorridos BFS/DFS y el mapa ya llaman a tu grafo.
-4. Dijkstra solo debe llenar `Exito`, `Mensaje`, `Camino` (origen y destino incluidos) y `PesoTotal`.
-   Los totales de tiempo y costo los calcula `SistemaTransporte`.
+La arquitectura desacopla la capa de interfaz gráfica (`Windows Forms` / GDI+) de la lógica algorítmica mediante un contrato de interfaz (`IGrafoTransporte`), garantizando modularidad, escalabilidad e interoperabilidad.
 
-## Flujo integrado
-Trie (sugiere) -> Tabla Hash (registro por código) -> Union-Find (misma zona) -> Grafo (Dijkstra).
-La pestaña "Calcular" muestra qué estructura participó en cada paso.
+---
 
-## Mapa
-Sin internet ni librerías: se dibuja con GDI+ usando latitud y longitud, sobre el contorno de Guatemala
-incrustado en `MapaBase.cs`. Rueda del ratón = zoom, arrastrar = mover, botón del globo = ver todo el país.
+## 2. Estructuras de Datos Utilizadas y Justificación
 
-## Formato de los archivos
-paradas: `codigo,nombre,latitud,longitud`
-rutas: `origen,destino,tiempo,costo,unidireccional` (1 = un solo sentido)
+El núcleo del sistema integra cuatro estructuras de datos personalizadas, construidas desde cero sin utilizar librerías de colecciones avanzadas de .NET (como `SortedDictionary` o `PriorityQueue`):
 
-## Mapa real (GMap.NET) y mapa ligero
-- Por defecto se abre el **mapa real** de OpenStreetMap (paquete NuGet `GMap.NET.WinForms`). Necesita internet para
-  descargar el fondo; lo que ya se vio queda guardado en disco (caché) y se puede volver a ver sin conexión.
-- El botón **Mapa ligero / Mapa real** de la barra superior cambia entre los dos al instante.
-- El **mapa ligero** (`MapaControl.cs`) no usa internet ni librerías. Si el mapa real falla al iniciar, el programa
-  usa este automáticamente. También se puede abrir directo con: `dotnet run -- --ligero`
-- Antes de la defensa: abrir el programa con internet, acercar y alejar sobre Xela (y la zona que se vaya a mostrar)
-  para llenar la caché, y probar una vez sin internet.
-- Archivos del mapa: `UI/IMapaRed.cs`, `UI/FabricaMapa.cs`, `UI/MapaGMapControl.cs`, `UI/MapaControl.cs`.
+| Estructura | Módulo / Aplicación en el Sistema | Complejidad Temporal | Complejidad Espacial | Justificación Técnica |
+| :--- | :--- | :---: | :---: | :--- |
+| **Tabla Hash** | Indexación y búsqueda de registros de `Parada` por código único (ID). | $O(1)$ promedio | $O(V)$ | Acceso inmediato a la información completa de cualquier nodo sin escaneo secuencial. Factor de carga de 0.75 y resolución de colisiones mediante encadenamiento. |
+| **Árbol Trie** | Motor de autocompletado en el buscador interactivo de paradas por nombre. | $O(L)$ ($L$ = longitud del texto) | $O(\Sigma \cdot N \cdot L)$ | Permite sugerir estaciones en tiempo real a medida que el usuario teclea, sin verse afectado por la cantidad total de registros en la red. |
+| **Union-Find (Disjoint Set)** | Verificación de conectividad y detección de componentes conexas (Zonas). | $O(\alpha(V)) \approx O(1)$ | $O(V)$ | Barrera lógica de validación previa: impide que el algoritmo de Dijkstra se ejecute en grafos disconexos, ahorrando ciclos de CPU. Implementa compresión de caminos. |
+| **Grafo (Listas de Adyacencia)** | Modelado de la red vial, recorridos y cálculo de caminos mínimos. | $O(V + E)$ | $O(V + E)$ | Optimización estricta de memoria para grafos dispersos (*sparse graphs*), evitando el desperdicio espacial $O(V^2)$ propio de matrices de adyacencia. |
+| **MinHeap (Montículo Binario)** | Cola de prioridad propia integrada al algoritmo de Dijkstra. | $O(\log V)$ por extracción/inserción | $O(V)$ | Reemplaza la búsqueda lineal del vértice mínimo ($O(V)$), optimizando el tiempo total de Dijkstra a $O(E \log V)$. Implementa operaciones `Flotar` y `Hundir`. |
+
+---
+
+## 3. Análisis de Trade-Offs (Compromisos de Diseño)
+
+En el diseño e integración del sistema se asumieron las siguientes decisiones de ingeniería:
+
+1. **Trie vs. Búsqueda Secuencial (`Contains` en Lista):**
+   * *Ganancia:* Búsqueda de prefijos ultraveloz en tiempo $O(L)$, permitiendo autocompletado fluido en la interfaz.
+   * *Sacrificio:* Consumo de memoria RAM significativamente mayor, debido a la creación de múltiples nodos y punteros por cada carácter del alfabeto.
+2. **Union-Find como Filtro previo a Dijkstra:**
+   * *Ganancia:* Tiempo de respuesta casi instantáneo ($O(\alpha(V))$) para rechazar rutas inviables entre zonas aisladas.
+   * *Sacrificio:* Memoria auxiliar para mantener arreglos de representantes/padres y sobrecosto de actualización en cada inserción de aristas.
+3. **Listas de Adyacencia con Tabla Hash vs. Matriz de Adyacencia:**
+   * *Ganancia:* Eficiencia espacial $O(V + E)$. En una red de 30 paradas, una matriz reserva 900 celdas (la mayoría ceros); la lista solo almacena las conexiones reales.
+   * *Sacrificio:* Mayor complejidad en la gestión de punteros y costo ligeramente superior para verificar la existencia de una arista específica ($O(\text{grado}(u))$ vs $O(1)$ directo).
+4. **MinHeap Propio vs. Búsqueda Lineal:**
+   * *Ganancia:* Reducción de complejidad temporal de $O(V^2)$ a $O(E \log V)$.
+   * *Sacrificio:* Complejidad de codificación y mantenimiento de las propiedades de árbol balanceado en memoria mediante arreglos dinámicos.
+
+---
+
+## 4. Instrucciones de Compilación y Ejecución
+
+### Prerrequisitos
+* [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) o superior.
+* Sistema Operativo Windows (requerido para el renderizado de `Windows Forms`).
+* Visual Studio 2022 o Visual Studio Code con extensión de C#.
+
+### Pasos de Instalación y Despliegue
+1. Clonar el repositorio público:
+   ```bash
+   git clone [https://github.com/tu-usuario/TransporteUrbano.git](https://github.com/tu-usuario/TransporteUrbano.git)
+   cd TransporteUrbano
