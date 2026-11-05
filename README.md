@@ -57,5 +57,5 @@ En el diseño e integración del sistema se asumieron las siguientes decisiones 
 ### Pasos de Instalación y Despliegue
 1. Clonar el repositorio público:
    ```bash
-   git clone [https://github.com/tu-usuario/TransporteUrbano.git](https://github.com/tu-usuario/TransporteUrbano.git)
+   git clone [https://github.com/DanSoberanis/Proyecto-Final-EDDII](https://github.com/DanSoberanis/Proyecto-Final-EDDII)
    cd TransporteUrbano
